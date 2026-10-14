@@ -1,0 +1,252 @@
+{
+  "g1": [
+    {
+      "id": "g1-01",
+      "src": "assets/video/g1/g1-01.mp4",
+      "poster": "assets/poster/g1-01.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 8.41
+    },
+    {
+      "id": "g1-02",
+      "src": "assets/video/g1/g1-02.mp4",
+      "poster": "assets/poster/g1-02.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 16.23
+    },
+    {
+      "id": "g1-03",
+      "src": "assets/video/g1/g1-03.mp4",
+      "poster": "assets/poster/g1-03.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 11.63
+    },
+    {
+      "id": "g1-04",
+      "src": "assets/video/g1/g1-04.mp4",
+      "poster": "assets/poster/g1-04.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 17.37
+    },
+    {
+      "id": "g1-05",
+      "src": "assets/video/g1/g1-05.mp4",
+      "poster": "assets/poster/g1-05.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 5.8
+    },
+    {
+      "id": "g1-06",
+      "src": "assets/video/g1/g1-06.mp4",
+      "poster": "assets/poster/g1-06.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 20.74
+    },
+    {
+      "id": "g1-07",
+      "src": "assets/video/g1/g1-07.mp4",
+      "poster": "assets/poster/g1-07.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 7.24
+    },
+    {
+      "id": "g1-08",
+      "src": "assets/video/g1/g1-08.mp4",
+      "poster": "assets/poster/g1-08.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 22.13
+    },
+    {
+      "id": "g1-09",
+      "src": "assets/video/g1/g1-09.mp4",
+      "poster": "assets/poster/g1-09.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 6.53
+    },
+    {
+      "id": "g1-10",
+      "src": "assets/video/g1/g1-10.mp4",
+      "poster": "assets/poster/g1-10.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 10.37
+    },
+    {
+      "id": "g1-11",
+      "src": "assets/video/g1/g1-11.mp4",
+      "poster": "assets/poster/g1-11.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 9.13
+    },
+    {
+      "id": "g1-12",
+      "src": "assets/video/g1/g1-12.mp4",
+      "poster": "assets/poster/g1-12.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 16.1
+    },
+    {
+      "id": "g1-13",
+      "src": "assets/video/g1/g1-13.mp4",
+      "poster": "assets/poster/g1-13.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 6.2
+    },
+    {
+      "id": "g1-14",
+      "src": "assets/video/g1/g1-14.mp4",
+      "poster": "assets/poster/g1-14.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 10.7
+    },
+    {
+      "id": "g1-15",
+      "src": "assets/video/g1/g1-15.mp4",
+      "poster": "assets/poster/g1-15.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 4.3
+    },
+    {
+      "id": "g1-16",
+      "src": "assets/video/g1/g1-16.mp4",
+      "poster": "assets/poster/g1-16.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 7.31
+    },
+    {
+      "id": "g1-17",
+      "src": "assets/video/g1/g1-17.mp4",
+      "poster": "assets/poster/g1-17.jpg",
+      "w": 1280,
+      "h": 720,
+      "dur": 4.33
+    },
+    {
+      "id": "g1-18",
+      "src": "assets/video/g1/g1-18.mp4",
+      "poster": "assets/poster/g1-18.jpg",
+      "w": 960,
+      "h": 540,
+      "dur": 2.8
+    }
+  ],
+  "probe": [
+    {
+      "id": "probe-01-vogue",
+      "src": "assets/video/probe/probe-01-vogue.mp4",
+      "poster": "assets/poster/probe-01-vogue.jpg",
+      "caption": "A person is fluidly performing the vogue dance, holding a handbag and walking forward, and then stops standing idle.",
+      "rmse": "26.3 mm",
+      "w": 1488,
+      "h": 1200,
+      "dur": 8.28
+    },
+    {
+      "id": "probe-02-walk-sway",
+      "src": "assets/video/probe/probe-02-walk-sway.mp4",
+      "poster": "assets/poster/probe-02-walk-sway.jpg",
+      "caption": "The person is walking forward while swaying their arms.",
+      "rmse": "26.3 mm",
+      "w": 1488,
+      "h": 1200,
+      "dur": 9.56
+    },
+    {
+      "id": "probe-03-crouch-forward",
+      "src": "assets/video/probe/probe-03-crouch-forward.mp4",
+      "poster": "assets/poster/probe-03-crouch-forward.jpg",
+      "caption": "A person is crouching while moving forward, with a bent torso and legs spread wide apart.",
+      "rmse": "28.3 mm",
+      "w": 1488,
+      "h": 1200,
+      "dur": 5.64
+    },
+    {
+      "id": "probe-04-jog-backward",
+      "src": "assets/video/probe/probe-04-jog-backward.mp4",
+      "poster": "assets/poster/probe-04-jog-backward.jpg",
+      "caption": "A person starts jogging backward from a stationary stance.",
+      "rmse": "26.1 mm",
+      "w": 1488,
+      "h": 1200,
+      "dur": 4.86
+    },
+    {
+      "id": "probe-05-side-steps",
+      "src": "assets/video/probe/probe-05-side-steps.mp4",
+      "poster": "assets/poster/probe-05-side-steps.jpg",
+      "caption": "A person is taking several steps to the left in a hurry.",
+      "rmse": "26.3 mm",
+      "w": 1488,
+      "h": 1200,
+      "dur": 4.7
+    }
+  ],
+  "loop": [
+    {
+      "id": "g1-01",
+      "src": "assets/video/loop/g1-01.mp4",
+      "poster": "assets/poster/g1-01.jpg"
+    },
+    {
+      "id": "g1-02",
+      "src": "assets/video/loop/g1-02.mp4",
+      "poster": "assets/poster/g1-02.jpg"
+    },
+    {
+      "id": "g1-03",
+      "src": "assets/video/loop/g1-03.mp4",
+      "poster": "assets/poster/g1-03.jpg"
+    },
+    {
+      "id": "g1-04",
+      "src": "assets/video/loop/g1-04.mp4",
+      "poster": "assets/poster/g1-04.jpg"
+    },
+    {
+      "id": "g1-05",
+      "src": "assets/video/loop/g1-05.mp4",
+      "poster": "assets/poster/g1-05.jpg"
+    },
+    {
+      "id": "g1-06",
+      "src": "assets/video/loop/g1-06.mp4",
+      "poster": "assets/poster/g1-06.jpg"
+    },
+    {
+      "id": "g1-07",
+      "src": "assets/video/loop/g1-07.mp4",
+      "poster": "assets/poster/g1-07.jpg"
+    },
+    {
+      "id": "g1-08",
+      "src": "assets/video/loop/g1-08.mp4",
+      "poster": "assets/poster/g1-08.jpg"
+    },
+    {
+      "id": "g1-09",
+      "src": "assets/video/loop/g1-09.mp4",
+      "poster": "assets/poster/g1-09.jpg"
+    },
+    {
+      "id": "g1-10",
+      "src": "assets/video/loop/g1-10.mp4",
+      "poster": "assets/poster/g1-10.jpg"
+    }
+  ]
+}

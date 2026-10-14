@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SeMoCo · A Semantic-First Motion Codec for Motion Language Modeling</title>
+<meta name="description" content="SeMoCo is a semantic-first motion codec that pairs a teacher-distilled semantic token with a kinematic residual hierarchy, together with a dual-axis motion language model and the 1,006-hour Ω-MotionVerse corpus.">
+<meta property="og:title" content="SeMoCo · A Semantic-First Motion Codec">
+<meta property="og:description" content="Each motion token carries one semantic code and a residual sequence of kinematic codes. A dual-axis generator models semantic progression across time and refines kinematics within each packet.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/figures/tokenizer.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/fraunces-latin-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/archivo-latin-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="scroll-progress"><i></i></div>
+
+<!-- ───────────────────────── nav ───────────────────────── -->
+<header class="nav" id="nav">
+  <a class="nav__mark" href="#top">
+    <span class="packet packet--mini" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span>SeMoCo</span>
+  </a>
+  <nav class="nav__links">
+    <a href="#overview"><i>01</i>Overview</a>
+    <a href="#codec"><i>02</i>Codec</a>
+    <a href="#generator"><i>03</i>Generator</a>
+    <a href="#data"><i>04</i>Data</a>
+    <a href="#results"><i>05</i>Results</a>
+    <a href="#avatars"><i>06</i>Avatars</a>
+    <a href="#humanoid"><i>07</i>Humanoid</a>
+  </nav>
+  <a class="nav__cta" href="https://arxiv.org/abs/2608.24334" target="_blank" rel="noopener">arXiv<span>↗</span></a>
+  <button class="nav__burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i></button>
+</header>
+
+<!-- ───────────────────────── hero ───────────────────────── -->
+<main id="top">
+<section class="hero">
+  <div class="hero__wash" aria-hidden="true"></div>
+  <div class="hero__grid" aria-hidden="true"></div>
+
+  <div class="hero__main">
+    <div class="hero__type">
+      <h1 class="hero__title">SeMoCo</h1>
+
+      <p class="hero__sub">
+        A <em>semantic-first</em> motion codec<br>for motion language modeling.
+      </p>
+
+      <ul class="authors">
+        <li><a href="#">Tianlv Huang</a><sup>1,2,*</sup></li>
+        <li><a href="#">Hetian Guo</a><sup>1,2,*</sup></li>
+        <li><a href="#">Ziyi Cai</a><sup>3</sup></li>
+        <li><a href="#">Song Wang</a><sup>2</sup></li>
+        <li><a href="#">Yanping Zhang</a><sup>2</sup></li>
+        <li><a href="#">Zipei Fan</a><sup>1,†</sup></li>
+        <li><a href="#">Xuan Song</a><sup>1</sup></li>
+        <li><a href="#">Guangming Wu</a><sup>2,‡</sup></li>
+        <li><a href="#">Xin Zheng</a><sup>2,‡</sup></li>
+      </ul>
+      <p class="affil">
+        <span><sup>1</sup>Jilin University</span>
+        <span><sup>2</sup>Frontier Robotics</span>
+        <span><sup>3</sup>Harbin Institute of Technology, Shenzhen</span>
+      </p>
+      <p class="affil affil--note">
+        <span>* Equal contribution</span>
+        <span>† Corresponding author</span>
+        <span>‡ Project leads</span>
+      </p>
+
+      <div class="cta">
+        <a class="btn btn--primary" href="https://arxiv.org/abs/2608.24334" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v6h5"/></svg>
+          Paper
+        </a>
+        <a class="btn" href="assets/paper/SeMoCo.pdf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 21h16"/></svg>
+          PDF
+        </a>
+        <a class="btn" href="https://github.com/OMEGA-i/SeMoCo-Tokenizer" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-4a3.5 3.5 0 0 0-1-2.7c3-.3 6-1.5 6-6.5a5 5 0 0 0-1.4-3.5 4.7 4.7 0 0 0-.1-3.5s-1.1-.3-3.5 1.3a12 12 0 0 0-6 0C7.1 1.3 6 1.6 6 1.6a4.7 4.7 0 0 0-.1 3.5A5 5 0 0 0 4.5 8.6c0 5 3 6.2 6 6.5a3.5 3.5 0 0 0-1 2.7v4"/></svg>
+          Tokenizer
+        </a>
+        <a class="btn" href="https://github.com/OMEGA-i/SeMoCo-Generator" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-4a3.5 3.5 0 0 0-1-2.7c3-.3 6-1.5 6-6.5a5 5 0 0 0-1.4-3.5 4.7 4.7 0 0 0-.1-3.5s-1.1-.3-3.5 1.3a12 12 0 0 0-6 0C7.1 1.3 6 1.6 6 1.6a4.7 4.7 0 0 0-.1 3.5A5 5 0 0 0 4.5 8.6c0 5 3 6.2 6 6.5a3.5 3.5 0 0 0-1 2.7v4"/></svg>
+          Generator
+        </a>
+        <a class="btn btn--ghost" href="#cite">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v3a2 2 0 0 1-2 2"/><path d="M19 7h-3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v3a2 2 0 0 1-2 2"/></svg>
+          BibTeX
+        </a>
+      </div>
+    </div>
+
+    <aside class="hero__stream" aria-hidden="true">
+      <canvas class="hero__canvas" id="tokenField"></canvas>
+      <p class="hero__streamcap"><b>12.5 Hz</b><span>1 semantic + 15 kinematic</span></p>
+    </aside>
+  </div>
+
+  <!-- film strip -->
+  <div class="strip" id="strip" aria-label="Motion previews on a Unitree G1">
+    <div class="strip__track" id="stripTrack"></div>
+    <div class="strip__label"><span>Unitree&nbsp;G1 · deployed via SONIC tracking</span></div>
+  </div>
+</section>
+
+<!-- ───────────────────────── overview ───────────────────────── -->
+<section class="section" id="overview">
+  <div class="band"><span class="band__no">01</span><span class="band__id">Overview</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead reveal">
+      <h2>Motion tokens that know<br><em>what</em> they mean.</h2>
+      <p class="lede">
+        Most motion tokenizers are trained for reconstruction alone, so action-level meaning and
+        fine-grained kinematics share one distortion-ordered hierarchy. SeMoCo splits the two:
+        a dedicated semantic quantizer is aligned to a frozen TMR-SOMA teacher, while a parallel
+        residual quantizer keeps the detail needed to reconstruct the body.
+      </p>
+    </header>
+
+    <div class="pillars">
+      <article class="pillar reveal" style="--d:0ms">
+        <span class="pillar__idx">i</span>
+        <h3>Split quantization</h3>
+        <p>A single semantic VQ runs <em>beside</em> — not inside — the kinematic RVQ chain, so
+          language alignment never reshapes the residual geometry.</p>
+        <p class="pillar__stat"><b>1 + 15</b><span>codes per packet, 12.5 Hz</span></p>
+      </article>
+      <article class="pillar reveal" style="--d:90ms">
+        <span class="pillar__idx">ii</span>
+        <h3>Dual-axis generation</h3>
+        <p>A temporal Transformer predicts the next semantic code; a lightweight depth decoder
+          completes its kinematic residuals along the codebook axis.</p>
+        <p class="pillar__stat"><b>188 / 391 M</b><span>Lite &amp; Base generators</span></p>
+      </article>
+      <article class="pillar reveal" style="--d:180ms">
+        <span class="pillar__idx">iii</span>
+        <h3>Ω-MotionVerse</h3>
+        <p>Five motion sources unified under the SOMA skeleton at 50 Hz, with provenance retained
+          for source-wise evaluation.</p>
+        <p class="pillar__stat"><b>1,006 h</b><span>909,913 text–motion pairs</span></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── codec ───────────────────────── -->
+<section class="section section--tint-a" id="codec">
+  <div class="band"><span class="band__no">02</span><span class="band__id">Tokenizer</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead reveal">
+      <h2>The semantic-first packet.</h2>
+      <p class="lede">
+        A stride-four convolutional encoder turns 50 Hz transition records into 12.5 Hz latents.
+        Two projections split each latent: one is quantized by a single semantic codebook and
+        aligned to the frozen teacher by a window-level cosine loss; the other is consumed by a
+        15-stage residual quantizer. Both are summed back into one decoder space.
+      </p>
+    </header>
+
+    <figure class="figure figure--wide reveal">
+      <a class="figure__zoom" href="assets/figures/tokenizer.png" data-zoom data-cap="Figure 1 — SeMoCo tokenizer.">
+        <picture>
+          <source srcset="assets/figures/tokenizer.webp" type="image/webp">
+          <img src="assets/figures/tokenizer.png" alt="SeMoCo tokenizer architecture: encoder, split semantic VQ and kinematic RVQ, TMR-SOMA distillation, decoder." loading="lazy" width="2400" height="888">
+        </picture>
+        <span class="figure__hint">Click to enlarge</span>
+      </a>
+      <figcaption>
+        <b>Figure 1 — SeMoCo tokenizer.</b> The encoder latent is factorized into a semantic stream
+        and a kinematic residual stream. Semantic supervision is applied only during codec training.
+      </figcaption>
+    </figure>
+
+    <div class="packet-demo reveal">
+      <div class="packet-demo__viz">
+        <div class="packet" id="packetViz" aria-hidden="true"></div>
+      </div>
+      <div class="packet-demo__text">
+        <p class="eyebrow"><i>m<sub>t</sub></i> packet layout</p>
+        <dl class="deflist">
+          <div><dt><span class="swatch swatch--sem"></span>q<sup>sem</sup></dt>
+            <dd>One code from a 1,024-entry semantic codebook, aligned to TMR-SOMA by cosine distance over a 16-packet window.</dd></div>
+          <div><dt><span class="swatch swatch--kin"></span>q<sup>kin,1…15</sup></dt>
+            <dd>Fifteen residual codes, each 1,024 entries, ordered by reconstruction error with quantizer dropout <i>p</i>&nbsp;=&nbsp;0.2.</dd></div>
+        </dl>
+        <p class="note">
+          Placing the constraint on a parallel branch costs <b>0.40 mm</b> of reconstruction against an
+          unsupervised reference, versus <b>2.65 mm</b> when it is applied inside the residual chain —
+          while reaching the closest agreement with the teacher (<b>.878</b> cosine).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── generator ───────────────────────── -->
+<section class="section" id="generator">
+  <div class="band"><span class="band__no">03</span><span class="band__id">Generator</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead reveal">
+      <h2>Two axes, not one long stream.</h2>
+    </header>
+
+    <div class="split">
+      <div class="split__text reveal">
+        <p class="lede lede--tight">
+          Flattening sixteen codes per step into a single sequence makes the context sixteen times
+          longer. Instead, the sixteen embeddings are summed into one packet token, so the temporal
+          Transformer still runs at 12.5 Hz.
+        </p>
+        <ol class="steps">
+          <li><b>Temporal axis.</b> Text tokens from a frozen Flan-T5-XL prefix the sequence; the
+            backbone predicts the next packet's semantic code and an EOS target.</li>
+          <li><b>Codebook axis.</b> Conditioned on that hidden state, a five-layer depth decoder
+            emits q<sup>kin,1</sup>…q<sup>kin,15</sup> autoregressively.</li>
+          <li><b>Decode.</b> Completed packets pass through the frozen SeMoCo decoder into
+            full-body SOMA motion.</li>
+        </ol>
+        <div class="minitable">
+          <div><span>Temporal layers</span><b>12 / 24</b></div>
+          <div><span>Hidden width</span><b>768 / 1,024</b></div>
+          <div><span>Context budget</span><b>300 packets ≈ 24 s</b></div>
+        </div>
+      </div>
+
+      <figure class="figure figure--tall reveal">
+        <a class="figure__zoom" href="assets/figures/generator.png" data-zoom data-cap="Figure 2 — Dual-axis motion language model.">
+          <picture>
+            <source srcset="assets/figures/generator.webp" type="image/webp">
+            <img src="assets/figures/generator.png" alt="Dual-axis motion language model: text encoder, temporal Transformer backbone, MTP module and motion decoder." loading="lazy" width="2207" height="2138">
+          </picture>
+          <span class="figure__hint">Click to enlarge</span>
+        </a>
+        <figcaption>
+          <b>Figure 2 — Dual-axis motion language model.</b> The MTP module completes each packet
+          from its semantic code down to the kinematic residuals.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── data ───────────────────────── -->
+<section class="section section--tint-b" id="data">
+  <div class="band"><span class="band__no">04</span><span class="band__id">Ω-MotionVerse</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead reveal">
+      <h2>One skeleton, five sources.</h2>
+      <p class="lede">
+        Every clip is converted to the SOMA-77 convention, resampled to 50 Hz, floor-aligned and
+        canonicalized at its first frame. Splits are drawn over source recordings, so no two clips
+        cut from the same take land in different partitions.
+      </p>
+    </header>
+
+    <div class="stats reveal">
+      <div class="stat"><b data-count="909913" data-fmt="int">0</b><span>text–motion pairs</span></div>
+      <div class="stat"><b data-count="1006" data-fmt="int">0</b><span>hours of motion</span></div>
+      <div class="stat"><b data-count="699152" data-fmt="int">0</b><span>source recordings</span></div>
+      <div class="stat"><b data-count="3.98" data-fmt="dec">0</b><span>mean clip seconds</span></div>
+    </div>
+
+    <div class="data-grid">
+      <figure class="figure reveal">
+        <a class="figure__zoom" href="assets/figures/dataset.png" data-zoom data-cap="Figure 3 — Ω-MotionVerse composition.">
+          <picture>
+            <source srcset="assets/figures/dataset.webp" type="image/webp">
+            <img src="assets/figures/dataset.png" alt="Composition of the Ω-MotionVerse corpus by source group and duration." loading="lazy" width="1395" height="1295">
+          </picture>
+          <span class="figure__hint">Click to enlarge</span>
+        </a>
+        <figcaption><b>Figure 3 — Composition.</b> Around 1,000 hours of text-paired motion.</figcaption>
+      </figure>
+
+      <div class="sources reveal">
+        <table class="tbl tbl--bare">
+          <thead><tr><th>Source</th><th>Pairs</th><th>Hours</th><th>Capture</th></tr></thead>
+          <tbody>
+            <tr><td>MotionGV</td><td>542,787</td><td>690.7</td><td>Monocular video</td></tr>
+            <tr><td>BONES-SEED</td><td>351,422</td><td>281.2</td><td>Optical marker</td></tr>
+            <tr><td>HumanML3D</td><td>14,094</td><td>28.1</td><td>Optical marker</td></tr>
+            <tr><td>Fit3D</td><td>922</td><td>5.1</td><td>Optical marker</td></tr>
+            <tr><td>HumanSC3D</td><td>688</td><td>0.9</td><td>Optical marker</td></tr>
+          </tbody>
+          <tfoot><tr><td>Total</td><td>909,913</td><td>1,006.0</td><td>—</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── results ───────────────────────── -->
+<section class="section" id="results">
+  <div class="band"><span class="band__no">05</span><span class="band__id">Results</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead reveal">
+      <h2>Reconstruction leads;<br>generation follows.</h2>
+    </header>
+
+    <div class="headline reveal">
+      <div class="headline__num"><b>12.83</b><i>mm</i></div>
+      <p>MPJPE-22 on the shared test split, where the compared codecs land at
+        <b>78.95</b>, <b>90.02</b> and <b>96.01</b> mm after a round trip through their native
+        representations.</p>
+    </div>
+
+    <div class="tables">
+      <div class="tcard reveal">
+        <p class="eyebrow"><i>T1</i> Motion reconstruction · HumanML3D</p>
+        <table class="tbl">
+          <thead><tr><th>Method</th><th>MPJPE ↓</th><th>Med. ↓</th><th>PA-MPJPE ↓</th></tr></thead>
+          <tbody>
+            <tr><td>MoMask</td><td>32.39</td><td>25.54</td><td>20.14</td></tr>
+            <tr><td>MotionGPT3</td><td>42.38</td><td>31.58</td><td>33.49</td></tr>
+            <tr><td>MotionMillion</td><td>42.54</td><td>31.51</td><td>19.84</td></tr>
+            <tr class="is-ours"><td>SeMoCo</td><td>19.22</td><td>17.36</td><td>16.42</td></tr>
+          </tbody>
+        </table>
+        <p class="tnote">Millimetres, 22 SMPL joints. Baselines on the official test set; SeMoCo on the HumanML3D portion of our split, which preserves the original partition.</p>
+      </div>
+
+      <div class="tcard reveal">
+        <p class="eyebrow"><i>T2</i> Motion prediction · observe 0.5 s, predict 2 s</p>
+        <table class="tbl">
+          <thead><tr><th>Method</th><th>ADE ↓</th><th>FDE ↓</th><th>minADE<sub>50</sub> ↓</th><th>minFDE<sub>50</sub> ↓</th></tr></thead>
+          <tbody>
+            <tr><td>MotionGPT3</td><td>2.103</td><td>3.155</td><td>1.333</td><td>1.830</td></tr>
+            <tr><td>MDM</td><td>2.146</td><td>3.973</td><td>0.877</td><td>1.252</td></tr>
+            <tr><td>MotionGPT</td><td>2.637</td><td>3.943</td><td>1.531</td><td>2.086</td></tr>
+            <tr class="is-ours"><td>Ours-Lite</td><td>1.228</td><td>2.449</td><td>0.695</td><td>1.095</td></tr>
+            <tr class="is-ours"><td>Ours-Base</td><td>1.273</td><td>2.483</td><td>0.759</td><td>1.220</td></tr>
+          </tbody>
+        </table>
+        <p class="tnote">Metres. Lite outperforms Base here, reversing the text-to-motion ordering.</p>
+      </div>
+
+      <div class="tcard tcard--wide reveal">
+        <p class="eyebrow"><i>T3</i> Tokenizer ablation · matched 150 M generators</p>
+        <table class="tbl">
+          <thead><tr><th>RVQ layout</th><th>Sem.</th><th>FID ↓</th><th>R@1 ↑</th><th>R@3 ↑</th><th>MedR ↓</th><th>MPJPE-77 ↓</th></tr></thead>
+          <tbody>
+            <tr><td>Single-chain</td><td class="c-no">✕</td><td>.202</td><td>.483</td><td>.663</td><td>1.65</td><td>15.60</td></tr>
+            <tr><td>Single-chain</td><td class="c-yes">✓</td><td>.211</td><td>.451</td><td>.637</td><td>1.93</td><td>18.54</td></tr>
+            <tr><td>Split-branch</td><td class="c-no">✕</td><td>.226</td><td>.319</td><td>.490</td><td>3.83</td><td><b>13.70</b></td></tr>
+            <tr class="is-ours"><td>Split-branch</td><td class="c-yes">✓</td><td><b>.186</b></td><td><b>.484</b></td><td>.656</td><td>1.70</td><td>15.93</td></tr>
+          </tbody>
+        </table>
+        <p class="tnote">TMR-SOMA overall pool, mean over 30 repeats. Semantic supervision inside the split layout moves FID from .226 to .186 and R@1 from .319 to .484, at a cost of 2.23 mm reconstruction — a trade-off the single-chain layout does not reproduce.</p>
+      </div>
+    </div>
+
+    <details class="more reveal">
+      <summary><span>Qualitative text-to-motion comparison</span></summary>
+      <figure class="figure figure--flat">
+        <a class="figure__zoom" href="assets/figures/qualitative.png" data-zoom data-cap="Figure 4 — Qualitative text-to-motion comparison.">
+          <picture>
+            <source srcset="assets/figures/qualitative.webp" type="image/webp">
+            <img src="assets/figures/qualitative.png" alt="Generated motion from HY-Motion, Kimodo and Ours-Base for three text prompts." loading="lazy" width="2400" height="683">
+          </picture>
+          <span class="figure__hint">Click to enlarge</span>
+        </a>
+        <figcaption><b>Figure 4.</b> HY-Motion, Kimodo and Ours-Base at matched timestamps for three prompts.</figcaption>
+      </figure>
+    </details>
+  </div>
+</section>
+
+<!-- ───────────────────────── avatars ───────────────────────── -->
+<section class="section section--tint-a section--gallery" id="avatars">
+  <div class="band"><span class="band__no">06</span><span class="band__id">Stylized avatars</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead shead--row reveal">
+      <div>
+        <h2>From text to a character.</h2>
+      </div>
+      <div class="shead__aside">
+        <span class="tag">Reference · Generated</span>
+        <p>Each clip pairs a <b>reference</b> motion on the left with the motion SeMoCo
+          <b>generates</b> from the same caption on the right. Both are rendered on a stylized
+          rig straight from the SOMA-77 skeleton, so hands and fingers move as generated.</p>
+      </div>
+    </header>
+
+    <div class="vgrid vgrid--probe" id="probeGrid"></div>
+  </div>
+</section>
+
+<!-- ───────────────────────── humanoid ───────────────────────── -->
+<section class="section section--ink section--gallery" id="humanoid">
+  <div class="band"><span class="band__no">07</span><span class="band__id">Real-world transfer</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead shead--row reveal">
+      <div>
+        <h2>On a Unitree G1.</h2>
+      </div>
+      <div class="shead__aside">
+        <span class="tag">18 takes · uncut</span>
+        <p>A subset of motions is retargeted and tracked on physical hardware through a
+          SONIC whole-body controller. Raw lab footage, no post-processing beyond a colour grade.
+          Every take is on the strip below the player.</p>
+      </div>
+    </header>
+  </div>
+
+  <div class="feature reveal">
+    <div class="feature__player">
+      <video id="featureVideo" muted loop playsinline preload="none"
+             poster="assets/poster/g1-01.jpg"></video>
+      <div class="feature__now" id="featureNow"><b>Take 01</b><span>of 18</span></div>
+      <button class="feature__expand" data-expand aria-label="Open fullscreen">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 15v5h-5M20 9V4h-5M4 15v5h5"/></svg>
+      </button>
+    </div>
+    <div class="feature__rail" id="featureRail"></div>
+  </div>
+
+  <div class="wrap">
+    <p class="eyebrow eyebrow--sub reveal"><i>↓</i> Three takes, side by side</p>
+    <div class="vgrid vgrid--g1" id="g1Grid"></div>
+  </div>
+</section>
+
+<!-- ───────────────────────── cite ───────────────────────── -->
+<section class="section" id="cite">
+  <div class="band"><span class="band__no">08</span><span class="band__id">Citation</span><span class="band__mark" aria-hidden="true"></span></div>
+  <div class="wrap">
+    <header class="shead reveal">
+      <h2>Cite this work.</h2>
+    </header>
+    <div class="bib reveal">
+      <button class="bib__copy" id="bibCopy">Copy</button>
+      <pre id="bibText">@article{huang2026semoco,
+  title   = {SeMoCo: A Semantic-First Motion Codec for Motion Language Modeling},
+  author  = {Huang, Tianlv and Guo, Hetian and Cai, Ziyi and Wang, Song and
+             Zhang, Yanping and Fan, Zipei and Song, Xuan and Wu, Guangming and
+             Zheng, Xin},
+  journal = {arXiv preprint arXiv:2608.24334},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div class="foot__mark">
+      <span class="packet packet--mini" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span>SeMoCo</span>
+    </div>
+    <nav class="foot__links">
+      <a href="https://arxiv.org/abs/2608.24334" target="_blank" rel="noopener">arXiv</a>
+      <a href="assets/paper/SeMoCo.pdf" target="_blank" rel="noopener">PDF</a>
+      <a href="https://github.com/OMEGA-i/SeMoCo-Tokenizer" target="_blank" rel="noopener">Tokenizer</a>
+      <a href="https://github.com/OMEGA-i/SeMoCo-Generator" target="_blank" rel="noopener">Generator</a>
+    </nav>
+    <p class="foot__note">Jilin University · Frontier Robotics · HITSZ</p>
+  </div>
+</footer>
+
+<!-- ───────────────────────── lightbox ───────────────────────── -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="lb__close" data-lb-close aria-label="Close">✕</button>
+  <button class="lb__nav lb__nav--prev" data-lb-prev aria-label="Previous">‹</button>
+  <button class="lb__nav lb__nav--next" data-lb-next aria-label="Next">›</button>
+  <div class="lb__stage" id="lbStage"></div>
+  <p class="lb__cap" id="lbCap"></p>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

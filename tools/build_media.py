@@ -182,7 +182,6 @@ def build_figures():
         print(f"  {name}  {im.size}  {os.path.getsize(d)/1e6:.2f} MB")
 
 
-
 if __name__ == "__main__":
     only = sys.argv[1:] or ["figures", "g1", "probe", "loops"]
     for d in (DIR_POSTER, DIR_FIG, ASSETS):

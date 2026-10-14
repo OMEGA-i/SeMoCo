@@ -3,8 +3,8 @@
 
 # Raw captures. Everything served by the site lives in assets/ and is produced
 # from these by tools/build_media.py — keep the originals out of the repo.
-g1/
-soma_probe/
-2608.24334v2.pdf
+/g1/
+/soma_probe/
+/2608.24334v2.pdf
 
 node_modules/

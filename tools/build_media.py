@@ -182,17 +182,9 @@ def build_figures():
         print(f"  {name}  {im.size}  {os.path.getsize(d)/1e6:.2f} MB")
 
 
-def build_paper():
-    d = os.path.join(ASSETS, "paper")
-    os.makedirs(d, exist_ok=True)
-    src = os.path.join(ROOT, "2608.24334v2.pdf")
-    if os.path.exists(src):
-        shutil.copy2(src, os.path.join(d, "SeMoCo.pdf"))
-        print("  paper copied")
-
 
 if __name__ == "__main__":
-    only = sys.argv[1:] or ["figures", "g1", "probe", "loops", "paper"]
+    only = sys.argv[1:] or ["figures", "g1", "probe", "loops"]
     for d in (DIR_POSTER, DIR_FIG, ASSETS):
         os.makedirs(d, exist_ok=True)
 
@@ -203,8 +195,6 @@ if __name__ == "__main__":
 
     if "figures" in only:
         print("figures:"); build_figures()
-    if "paper" in only:
-        print("paper:"); build_paper()
     if "g1" in only:
         print("g1:"); manifest["g1"] = build_g1()
     if "probe" in only:

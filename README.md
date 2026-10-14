@@ -24,7 +24,6 @@ assets/
   video/probe/      5 stylized-avatar probe clips
   video/loop/       short low-bitrate loops for the hero film strip
   poster/           first-paint stills for every clip
-  paper/SeMoCo.pdf  copy of the manuscript
   manifest.json     what the media build produced
 tools/
   extract_figures.py  crops the figures out of the PDF
@@ -61,7 +60,7 @@ With them present, and `ffmpeg` plus `pdftoppm` on PATH:
 ```bash
 python3 tools/extract_figures.py     # writes /tmp/semoco_figs
 python3 tools/build_media.py         # writes assets/
-python3 tools/build_media.py g1      # or a single group: figures|g1|probe|loops|paper
+python3 tools/build_media.py g1      # or a single group: figures|g1|probe|loops
 ```
 
 `build_media.py` strips audio, lifts the grey lab footage so it sits on the light

@@ -1,0 +1,38 @@
+{
+  "dataset": "omega",
+  "model": {
+    "input_dim": 499,
+    "latent_dim": 512,
+    "stride": 4,
+    "num_layers": 1,
+    "depth": 3,
+    "dropout": 0.2,
+    "causal": false,
+    "codebook_size": 1024,
+    "semantic_codebook_size": 1024,
+    "mu": 0.99,
+    "quantize_dropout": true,
+    "quantize_dropout_cutoff_index": 0,
+    "quantize_dropout_prob": 0.2,
+    "sample_codebook_temp": 0.5,
+    "semantic_dim": 256,
+    "semantic_supervision": true
+  },
+  "training": {
+    "seed": 3407,
+    "steps": 149040,
+    "batch_size": 1024,
+    "lr": 0.0004,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "weight_decay": 0.0001,
+    "warmup_steps": 500,
+    "semantic_weight": 0.15,
+    "semantic_start_weight": 0.05,
+    "semantic_warmup": 4000,
+    "save_every": 1000,
+    "schedule_steps": 1863000
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "omega",
+  "codec": "checkpoints/omega/tokenizer.pt",
+  "ar": "checkpoints/omega/semantic_ar.pt",
+  "flow": "checkpoints/omega/flow.pt",
+  "kin_stats": "checkpoints/omega/kin_stats.npz",
+  "feature_stats": "checkpoints/omega/feature_stats.npz",
+  "fps": 50,
+  "stride": 4,
+  "ar_guidance": 3.0,
+  "flow_guidance": 1.5,
+  "steps": 32,
+  "ar_top_p": 0.95,
+  "temperature": 1.0
+}

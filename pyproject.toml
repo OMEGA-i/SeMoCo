@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semoco"
+version = "0.1.0"
+description = "Semantic motion tokenization and text-conditioned generation"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = ["torch>=2.6", "numpy>=1.24", "scipy>=1.11", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+text = ["transformers>=4.40", "sentencepiece", "protobuf"]
+dev = ["pytest>=8", "build"]
+
+[project.scripts]
+semoco-generate = "semoco.cli.generate:main"
+semoco-encode-text = "semoco.cli.encode_text:main"
+semoco-tokenize = "semoco.cli.tokenize:main"
+semoco-score = "semoco.evaluation.score:main"
+semoco-export = "semoco.cli.export:main"
+semoco-export-checkpoint = "semoco.cli.export_checkpoint:main"
+semoco-train-tokenizer = "semoco.training.tokenizer:main"
+semoco-train-ar = "semoco.training.ar:main"
+semoco-train-flow = "semoco.training.flow:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

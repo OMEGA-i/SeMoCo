@@ -1,0 +1,15 @@
+{
+  "dataset": "humanml3d",
+  "codec": "checkpoints/humanml3d/tokenizer.pt",
+  "ar": "checkpoints/humanml3d/semantic_ar.pt",
+  "flow": "checkpoints/humanml3d/flow.pt",
+  "kin_stats": "checkpoints/humanml3d/kin_stats.npz",
+  "feature_stats": "checkpoints/humanml3d/feature_stats.npz",
+  "fps": 20,
+  "stride": 4,
+  "ar_guidance": 3.5,
+  "flow_guidance": 3.0,
+  "steps": 32,
+  "ar_top_p": 0.95,
+  "temperature": 1.0
+}

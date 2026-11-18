@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+build/
+dist/
+data/
+!src/semoco/data/
+checkpoints/
+runs/
+*.pt
+*.pth
+*.npy
+*.npz
+*.log
+.DS_Store

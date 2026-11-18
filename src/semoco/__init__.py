@@ -1,0 +1,1 @@
+"""SeMoCo main-method implementation."""

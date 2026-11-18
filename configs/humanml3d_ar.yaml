@@ -1,0 +1,38 @@
+{
+  "model": {
+    "num_codebooks": 1,
+    "codebook_size": 1024,
+    "d_model": 1024,
+    "n_layers": 24,
+    "n_heads": 8,
+    "n_kv_heads": 4,
+    "ffn_hidden": 2730,
+    "rope_theta": 1000000.0,
+    "norm_eps": 1e-05,
+    "dropout": 0.2,
+    "max_seq_len": 4096,
+    "context_length": 122,
+    "gradient_checkpointing": false,
+    "use_text": true,
+    "clip_dim": 2048,
+    "text_cond_prob": 0.1,
+    "eos_loss_scale": 1.0,
+    "len_cond": 1,
+    "len_max": 64
+  },
+  "training": {
+    "seed": 3407,
+    "steps": 10000,
+    "batch_size": 256,
+    "lr": 0.0003,
+    "weight_decay": 0.01,
+    "warmup_steps": 4000,
+    "save_every": 2000,
+    "schedule_steps": 40000,
+    "max_tokens": 50,
+    "microbatch": 32,
+    "min_lr_ratio": 0.1,
+    "schedule_offset": 1,
+    "loss_reduction": "logical_tokens"
+  }
+}

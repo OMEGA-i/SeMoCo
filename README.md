@@ -76,6 +76,17 @@ We thank [TMR](https://github.com/Mathux/TMR),
 
 [Apache-2.0](LICENSE).
 
+## Citation
+
+```bibtex
+@article{semoco,
+  title   = {SeMoCo: Semantic Motion Tokens with Body-Structured Flow Matching},
+  author  = {Huang, Tianlv and Guo, Hetian and Cai, Ziyi and Liu, Yu and Peng, Yingzhi and Wang, Song and Fan, Zipei and Song, Xuan and Wu, Guangming and Zheng, Xin},
+  journal = {arXiv preprint arXiv:2608.24334},
+  year    = {2026}
+}
+```
+
 [models]: https://huggingface.co/poisonousID/SeMoCo
 [project]: https://omega-i.github.io/SeMoCo-Page/
 [paper]: https://arxiv.org/abs/2608.24334

@@ -11,7 +11,7 @@
 
 ![SeMoCo teaser](assets/teaser.png)
 
-SeMoCo generates human motion from text through semantic motion tokens and body-structured flow matching. A semantic-first tokenizer separates action semantics from kinematic detail, while an autoregressive semantic prior guides a six-part flow model to synthesize full-body motion. The generated motions support virtual character animation and transfer to humanoid robots.
+SeMoCo couples a semantically supervised motion codec with body-structured flow matching for text-to-motion generation. An autoregressive model predicts semantic sequences from text, and a conditional flow generates continuous kinematic features while coordinating the root, torso, and limbs across time. The semantic codes and kinematic features are jointly decoded into full-body motion.
 
 ## Installation
 

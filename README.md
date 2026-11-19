@@ -1,4 +1,4 @@
-# SeMoCo
+# SeMoCo: Semantic Motion Tokens with Body-Structured Flow Matching
 
 <div align="center">
 

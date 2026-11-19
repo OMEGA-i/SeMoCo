@@ -1,10 +1,17 @@
 # SeMoCo
 
-[Models][models] | [Training](docs/TRAINING.md) | [Inference](docs/INFERENCE.md)
+<div align="center">
+
+[![Project Page](https://img.shields.io/badge/Project-Page-007ec6?style=plastic)][project]
+[![arXiv](https://img.shields.io/badge/arXiv-2608.24334-b31b1b?style=plastic)][paper]
+[![Hugging Face Models](https://img.shields.io/badge/Hugging%20Face-Models-d4b414?style=plastic)][models]
+[![License](https://img.shields.io/badge/License-Apache%202.0-77aa1c?style=plastic)](LICENSE)
+
+</div>
 
 ![SeMoCo teaser](assets/teaser.png)
 
-SeMoCo combines semantic motion tokens with body-structured flow matching for text-to-motion generation.
+SeMoCo generates human motion from text through semantic motion tokens and body-structured flow matching. A semantic-first tokenizer separates action semantics from kinematic detail, while an autoregressive semantic prior guides a six-part flow model to synthesize full-body motion. The generated motions support virtual character animation and transfer to humanoid robots.
 
 ## Installation
 
@@ -70,3 +77,5 @@ We thank [TMR](https://github.com/Mathux/TMR),
 [Apache-2.0](LICENSE).
 
 [models]: https://huggingface.co/poisonousID/SeMoCo
+[project]: https://omega-i.github.io/SeMoCo-Page/
+[paper]: https://arxiv.org/abs/2608.24334

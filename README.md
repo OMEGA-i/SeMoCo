@@ -2,7 +2,9 @@
 
 [Models][models] | [Training](docs/TRAINING.md) | [Inference](docs/INFERENCE.md)
 
-Official implementation of **SeMoCo: Semantic Motion Tokens with Body-Structured Flow Matching**.
+![SeMoCo teaser](assets/teaser.png)
+
+SeMoCo combines semantic motion tokens with body-structured flow matching for text-to-motion generation.
 
 ## Installation
 

@@ -18,6 +18,11 @@ def main():
         rel = path.relative_to(args.root)
         if not path.is_file() or any(part in ignored or part.endswith(".egg-info") for part in rel.parts):
             continue
+        if rel.parts[0] == "assets" and path.suffix == ".png":
+            files += 1
+            if not path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"):
+                issues.append(dict(file=str(rel), issue="invalid PNG asset"))
+            continue
         if path.suffix not in extensions:
             issues.append(dict(file=str(rel), issue="unexpected binary or artifact"))
             continue

@@ -25,6 +25,7 @@ class MotionGPTConfig:
     len_max: int = 64
 
     def __post_init__(self):
+        self.norm_eps = float(self.norm_eps)
         if self.num_codebooks != 1 or not self.use_text:
             raise ValueError("the main prior predicts one semantic code from text")
         if self.d_model % self.n_heads or self.n_heads % self.kv_heads or self.head_dim % 2:

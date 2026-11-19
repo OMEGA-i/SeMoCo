@@ -104,6 +104,7 @@ def generate(
     frames: torch.Tensor, latent_mean: torch.Tensor, latent_std: torch.Tensor,
     q0: torch.Tensor | None = None, seed: int = 7, ar_guidance: float | None = None,
     flow_guidance: float | None = None, steps: int = 32, initial_noise: torch.Tensor | None = None,
+    generator: torch.Generator | None = None, reseed: bool = True,
 ) -> tuple[list[torch.Tensor], torch.Tensor, torch.Tensor]:
     """Return unpadded codec features, semantic codes, and raw continuous latents."""
     recipe = RECIPES[flow.dataset]
@@ -115,17 +116,20 @@ def generate(
     if flow.training or codec.training:
         raise ValueError("put the Flow and codec in eval mode before generating")
     # CPU noise and a separate AR stream allow controlled comparisons between checkpoints.
-    rng = torch.Generator().manual_seed(seed)
+    # A caller that passes ``generator`` and ``reseed=False`` continues that stream
+    # across batches instead of repeating the same noise.
+    rng = generator if generator is not None else torch.Generator().manual_seed(seed)
     with torch.autocast(text.device.type, dtype=torch.bfloat16, enabled=text.device.type == "cuda"):
         if q0 is None:
             if ar is None:
                 raise ValueError("supply a semantic AR or an already sampled q0 plan")
             devices = [text.device.index or 0] if text.device.type == "cuda" else []
             with torch.random.fork_rng(devices=devices):
-                torch.random.default_generator.manual_seed(seed)
-                if devices:
-                    with torch.cuda.device(text.device):
-                        torch.cuda.manual_seed(seed)
+                if reseed:
+                    torch.random.default_generator.manual_seed(seed)
+                    if devices:
+                        with torch.cuda.device(text.device):
+                            torch.cuda.manual_seed(seed)
                 q0 = sample_q0(ar, text, text_valid, lengths,
                                guidance=recipe.ar_guidance if ar_guidance is None else ar_guidance)
         if q0.shape != valid.shape:

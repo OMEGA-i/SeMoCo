@@ -15,7 +15,7 @@ SeMoCo couples a semantically supervised motion codec with body-structured flow 
 
 ## Installation
 
-Requires Python 3.11+ and PyTorch with CUDA.
+Requires Python 3.11+ and PyTorch with CUDA. Tokenizer training on Ω-MotionVerse compiles a CUDA kernel, so the machine also needs a C compiler (`build-essential` or `gcc`).
 
 ```bash
 git clone https://github.com/OMEGA-i/SeMoCo.git
@@ -30,9 +30,13 @@ See [Model Files](docs/CHECKPOINTS.md) for the directory structure.
 
 ## Inference
 
+`examples/prompts.json` is a one-line caption. Encode it with the dataset text encoder, then generate:
+
 ```bash
+semoco-encode-text --prompts examples/prompts.json --retrieval data/tmr_text.npy \
+  --output runs/prompts.npz
 semoco-generate --config configs/humanml3d_inference.yaml \
-  --inputs data/prompts.npz --output runs/motion.npz
+  --inputs runs/prompts.npz --output runs/motion.npz
 ```
 
 Use `configs/omega_inference.yaml` for Ω-MotionVerse.

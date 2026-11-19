@@ -8,7 +8,7 @@
     "n_kv_heads": 4,
     "ffn_hidden": 2730,
     "rope_theta": 1000000.0,
-    "norm_eps": 1e-05,
+    "norm_eps": 0.00001,
     "dropout": 0.2,
     "max_seq_len": 4096,
     "context_length": 122,

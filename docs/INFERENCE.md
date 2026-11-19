@@ -49,9 +49,11 @@ latents. When feature statistics are supplied, it also contains the motion
 features in physical units. Offsets separate the clips in the concatenated arrays.
 
 HumanML3D uses the standard 263-dimensional motion representation at 20 Hz.
-Use `semoco.data.humanml3d.recover_joints` on each clip's physical features to
-recover its 22 joint positions. Ω-MotionVerse uses UMR499 at 50 Hz. Ω recovery
-also needs the motion's initial anchor and the SOMA body runtime.
+The released `feature_stats.npz` is the Guo evaluator normalization. Use
+`semoco.data.humanml3d.recover_joints` on each clip's physical features to
+recover its 22 joint positions. Ω-MotionVerse uses UMR499 at 50 Hz. Recover its
+77 joints with `semoco.data.omega.recover_joints` and a SOMA77 template; the
+default anchor is the neutral identity pose.
 
 To encode or reconstruct existing motion independently of the generator, see
 [Use the tokenizer](TOKENIZER.md).

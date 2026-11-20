@@ -184,3 +184,27 @@ def test_omega_export_recovers_joints_automatically_and_tmr186_canonicalizes(tmp
     assert features_186.ndim == 2 and features_186.shape[1] == 186 and torch.isfinite(features_186).all()
     torch.testing.assert_close(features_186[0, [0, 2]], torch.zeros(2), atol=1e-5, rtol=0)
     torch.testing.assert_close(features_186[0, 3:5], torch.tensor([1.0, 0.0]), atol=1e-5, rtol=0)
+
+
+def test_built_wheel_and_sdist_include_soma77_template(tmp_path):
+    import os
+    from pathlib import Path
+    import shutil
+    import tarfile
+    import zipfile
+    import setuptools.build_meta as build_meta
+
+    root = Path(__file__).resolve().parents[1]
+    old_cwd = Path.cwd()
+    os.chdir(root)
+    try:
+        wheel_name = build_meta.build_wheel(str(tmp_path))
+        sdist_name = build_meta.build_sdist(str(tmp_path))
+    finally:
+        os.chdir(old_cwd)
+        shutil.rmtree(root / "build", ignore_errors=True)
+    with zipfile.ZipFile(tmp_path / wheel_name) as zf:
+        assert "semoco/assets/soma77_template.npz" in zf.namelist()
+    with tarfile.open(tmp_path / sdist_name) as tf:
+        assert any(name.endswith("src/semoco/assets/soma77_template.npz") for name in tf.getnames())
+

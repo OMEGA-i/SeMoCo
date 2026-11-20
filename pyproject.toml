@@ -29,6 +29,9 @@ semoco-train-flow = "semoco.training.flow:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+semoco = ["assets/*.npz"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"

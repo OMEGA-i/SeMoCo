@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import yaml
+from ..data.omega import DEFAULT_TEMPLATE
 from ..tokenizer.codec import CodecConfig, MotionTokenizer
 from ..tokenizer.losses import humanml_loss, OmegaReconstructionLoss, semantic_loss
 from .common import seed_all, save, random_state, restore_random, codebook_runtime, restore_codebook_runtime
@@ -39,9 +40,8 @@ def main(argv=None):
         parser.error("invalid feature statistics")
     geometry = None
     if dataset == "omega":
-        if args.template is None:
-            parser.error("Omega requires --template for the FK loss")
-        geometry = OmegaReconstructionLoss(args.template, mean, std).to(device)
+        template = DEFAULT_TEMPLATE if args.template is None else args.template
+        geometry = OmegaReconstructionLoss(template, mean, std).to(device)
     elif dataset != "humanml3d":
         parser.error("unsupported dataset")
     optimizer = torch.optim.AdamW(model.parameters(), lr=settings["lr"],

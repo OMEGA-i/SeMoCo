@@ -8,7 +8,8 @@ import torch
 
 from ..tokenizer.geometry import SomaFK
 
-_TEMPLATE = Path(__file__).resolve().parents[1] / "assets" / "soma77_template.npz"
+DEFAULT_TEMPLATE = Path(__file__).resolve().parents[1] / "assets" / "soma77_template.npz"
+_TEMPLATE = DEFAULT_TEMPLATE
 
 NUM_JOINTS = 77
 FEATURE_DIM = 499
@@ -62,12 +63,14 @@ def recover_joints(
     features: np.ndarray,
     template: str | Path | None = None,
     anchor: dict[str, np.ndarray] | None = None,
+    *,
+    include_anchor: bool = False,
 ) -> np.ndarray:
     """Convert physical UMR499 records ``[T, 499]`` to world joints ``[T, 77, 3]``.
 
-    ``template`` defaults to the packaged SOMA77 parents and offsets. The
-    returned frames are the transition records; the anchor pose is the pose
-    before the first record.
+    ``template`` defaults to the packaged SOMA77 parents and offsets. Set
+    ``include_anchor=True`` to retain the initial anchor pose at frame 0
+    (returning ``[1 + T, 77, 3]``).
     """
     template = _TEMPLATE if template is None else template
     features = np.asarray(features, dtype=np.float32)
@@ -83,4 +86,5 @@ def recover_joints(
     origin = np.asarray(seed["init_root_pos"], dtype=np.float32).reshape(3)
     translation = _root_translation(features, root_rotation, origin)
     local = SomaFK(template)(torch.from_numpy(rotations)).detach().cpu().numpy()
-    return (local + translation[:, None, :]).astype(np.float32)[1:]
+    world = (local + translation[:, None, :]).astype(np.float32)
+    return world if include_anchor else world[1:]

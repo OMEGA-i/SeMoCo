@@ -8,35 +8,37 @@ checkpoints/
     tokenizer.pt
     semantic_ar.pt
     flow.pt
+    text_encoder.pt
     kin_stats.npz
     feature_stats.npz
   omega/
     tokenizer.pt
     semantic_ar.pt
     flow.pt
+    text_encoder.pt
     kin_stats.npz
     feature_stats.npz
+    temporal_parent40k.pt
+    evaluator_v2.pt
+    norm_stats.json
 ```
 
-Each dataset has its own tokenizer, generator, and normalization statistics.
+Each dataset has its own tokenizer, generator, text encoder, and normalization statistics.
 The inference presets in `configs/` use this layout.
 
 | File | Contents |
 |---|---|
-| `tokenizer.pt` | Tokenizer configuration, weights, and optional feature statistics |
+| `tokenizer.pt` | Tokenizer configuration, weights, and feature statistics |
 | `semantic_ar.pt` | Semantic autoregressive model configuration and weights |
 | `flow.pt` | Six-part Flow configuration and EMA weights |
+| `text_encoder.pt` | Frozen TMR sentence encoder for `semoco-encode-text` |
 | `kin_stats.npz` | Motion-latent mean and standard deviation |
 | `feature_stats.npz` | Motion-feature mean and standard deviation |
-| `text_encoder.pt` | Frozen sentence encoder for `semoco-encode-text` |
-| `temporal_parent40k.pt` | Ω only. Ordinary Flow used to start six-part training |
+| `temporal_parent40k.pt` | Ω only. Pretrained temporal Flow backbone for six-part training |
+| `evaluator_v2.pt`, `norm_stats.json` | Ω only. Independent V2 motion/text evaluator and its 30 Hz statistics |
 
 Statistics are computed on the training set. HumanML3D uses 263 motion features;
 Ω-MotionVerse uses 499. Both use 512-dimensional motion latents.
-
-Training also uses a frozen TMR motion teacher and its normalization statistics.
-Text conditioning uses Flan-T5-XL and the matching TMR text encoder. The Ω Flow
-training preset starts from `checkpoints/omega/temporal_parent40k.pt`.
 
 ## Export trained models
 

@@ -79,13 +79,18 @@ def main():
                         help="One NPZ per complete repeat, with generated, reference and text arrays.")
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--group-size", type=int, default=32)
+    parser.add_argument("--output", type=Path, help="Optional JSON output file.")
     args = parser.parse_args()
     rows = []
     for path in args.embeddings:
         with np.load(path, allow_pickle=False) as data:
             rows.append(score_embeddings(data["generated"], data["reference"], data["text"],
                                          dataset=args.dataset, seed=args.seed, group_size=args.group_size))
-    print(json.dumps({"repeats": rows, "summary": summarize_repeats(rows)}, indent=2, allow_nan=False))
+    payload = json.dumps({"repeats": rows, "summary": summarize_repeats(rows)}, indent=2, allow_nan=False)
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(payload + "\n")
+    print(payload)
 
 
 if __name__ == "__main__":

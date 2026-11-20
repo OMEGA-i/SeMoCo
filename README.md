@@ -31,13 +31,13 @@ See [Model Files](docs/CHECKPOINTS.md) for the directory structure.
 ## Inference
 
 ```bash
-semoco-encode-text --dataset omega --prompts examples/prompts.json \
+semoco-encode-text --dataset humanml3d --prompts examples/prompts.json \
   --output runs/prompts.npz
-semoco-generate --config configs/omega_inference.yaml \
+semoco-generate --config configs/humanml3d_inference.yaml \
   --inputs runs/prompts.npz --output runs/motion.npz
 ```
 
-Use `--dataset humanml3d` and `configs/humanml3d_inference.yaml` for HumanML3D.
+Use `--dataset omega` and `configs/omega_inference.yaml` for Ω-MotionVerse.
 See [Generation](docs/INFERENCE.md) and [Tokenization](docs/TOKENIZER.md) for details.
 
 ## Training

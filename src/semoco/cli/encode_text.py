@@ -4,9 +4,28 @@ import json
 from pathlib import Path
 
 import numpy as np
+import torch
 
 from ..generator.sentence import SentenceEncoder
 from ..generator.text import TextConditioner
+
+
+class _BackboneTextEncoder:
+    """Token-level Hugging Face encoder for non-Flan TMR sentence encoders (e.g. DistilBERT on HumanML3D)."""
+
+    def __init__(self, model: str, device: str | torch.device, *, local_files_only: bool = False):
+        from transformers import AutoModel, AutoTokenizer
+        self.device = torch.device(device)
+        self.tokenizer = AutoTokenizer.from_pretrained(model, local_files_only=local_files_only)
+        self.model = AutoModel.from_pretrained(model, local_files_only=local_files_only)
+        self.model.to(self.device).eval().requires_grad_(False)
+
+    @torch.inference_mode()
+    def token_states(self, captions: list[str]) -> tuple[torch.Tensor, torch.Tensor]:
+        batch = self.tokenizer(captions, padding=True, truncation=True, max_length=64, return_tensors="pt")
+        batch = {key: value.to(self.device) for key, value in batch.items()}
+        hidden = self.model(**batch).last_hidden_state.float()
+        return hidden, batch["attention_mask"].bool()
 
 
 def main(argv=None):
@@ -17,6 +36,7 @@ def main(argv=None):
     parser.add_argument("--text-encoder", type=Path, help="Sentence encoder. Defaults to checkpoints/<dataset>/text_encoder.pt.")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--model", default="google/flan-t5-xl")
+    parser.add_argument("--sentence-model", help="Backbone for 768-D sentence encoders (defaults to distilbert/distilbert-base-uncased).")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--local-files-only", action="store_true")
@@ -44,17 +64,30 @@ def main(argv=None):
             parser.error("retrieval must contain normalized sentence embeddings")
     conditioner = TextConditioner(args.model, device=args.device, local_files_only=args.local_files_only)
     sentence_encoder = None if args.retrieval is not None else SentenceEncoder.load(encoder_path, args.device)
+    sentence_backbone = None
+    if sentence_encoder is not None and sentence_encoder.features != 2048:
+        backbone_name = args.sentence_model or "distilbert/distilbert-base-uncased"
+        sentence_backbone = _BackboneTextEncoder(
+            backbone_name, args.device, local_files_only=args.local_files_only
+        )
     rows = []
-    for begin in range(0, len(prompts), args.batch_size):
-        captions = [p["caption"] for p in prompts[begin:begin + args.batch_size]]
-        if sentence_encoder is None:
-            text, valid = conditioner.encode(captions, retrieval[begin:begin + args.batch_size])
-            rows.extend(x[m].cpu().numpy() for x, m in zip(text, valid, strict=True))
-            continue
-        tokens, valid = conditioner.token_states(captions)
-        sentence = sentence_encoder.encode(tokens, valid)
-        text, text_valid = conditioner.pack(tokens, valid, sentence)
-        rows.extend(x[m].cpu().numpy() for x, m in zip(text, text_valid, strict=True))
+    with torch.inference_mode():
+        for begin in range(0, len(prompts), args.batch_size):
+            captions = [p["caption"] for p in prompts[begin:begin + args.batch_size]]
+            if sentence_encoder is None:
+                text, valid = conditioner.encode(captions, retrieval[begin:begin + args.batch_size])
+                rows.extend(x[m].cpu().numpy() for x, m in zip(text, valid, strict=True))
+                continue
+            tokens, valid = conditioner.token_states(captions)
+            if sentence_backbone is None:
+                sentence = sentence_encoder.encode(tokens, valid)
+            else:
+                s_tokens, s_valid = sentence_backbone.token_states(captions)
+                if s_tokens.shape[-1] != sentence_encoder.features:
+                    parser.error("sentence backbone width does not match sentence encoder")
+                sentence = sentence_encoder.encode(s_tokens, s_valid)
+            text, text_valid = conditioner.pack(tokens, valid, sentence)
+            rows.extend(x[m].cpu().numpy() for x, m in zip(text, text_valid, strict=True))
     width = max(map(len, rows))
     text = np.zeros((len(rows), width, 2048), dtype=np.float32)
     valid = np.zeros((len(rows), width), dtype=bool)

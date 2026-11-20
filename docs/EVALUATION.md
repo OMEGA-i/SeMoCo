@@ -16,7 +16,7 @@ The main setting uses sampling seed 7, AR guidance 3.0, Flow guidance 1.5, and 3
 
 ## Scoring
 
-Extract motion and text embeddings using the dataset evaluator, then score the aligned arrays.
+Extract motion and text embeddings using the dataset evaluator, then score the aligned arrays. For Ω-MotionVerse, use `semoco.evaluation.soma77_to_tmr186` and `semoco.evaluation.OmegaV2Evaluator.load("checkpoints/omega/evaluator_v2.pt", "checkpoints/omega/norm_stats.json")` on recovered 50 Hz SOMA77 joints and test captions.
 
 One NPZ per repeat contains `generated`, `reference`, and `text`, all `[N,D]`, with consistent sample order. For HumanML3D, preserve the evaluator's groups of 32. For Ω, pass the complete arrays; the scorer performs the specified permutation for retrieval only.
 

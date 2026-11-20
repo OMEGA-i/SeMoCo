@@ -14,8 +14,8 @@ semoco-train-tokenizer --config configs/humanml3d_tokenizer.yaml \
 The tokenizer uses one semantic VQ and seven motion RVQ layers. A frozen TMR
 motion encoder supplies semantic targets for each 64-frame training window.
 
-For Ω-MotionVerse, use `configs/omega_tokenizer.yaml` and supply
-`--template data/soma77_template.npz` for the geometry loss.
+For Ω-MotionVerse, use `configs/omega_tokenizer.yaml` (the packaged SOMA77
+template is used automatically unless `--template` is overridden).
 
 | Setting | HumanML3D | Ω-MotionVerse |
 |---|---:|---:|

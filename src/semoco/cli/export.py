@@ -6,6 +6,7 @@ import numpy as np
 import torch
 from ..generator.parts import pack_part_targets
 from ..data.humanml3d import recover_joints
+from ..data.omega import recover_joints as recover_omega_joints
 from ..tokenizer.codec import load_codec, encode_flow_targets, decode_continuous
 
 
@@ -50,13 +51,18 @@ def main(argv=None):
             reconstructed = decode_continuous(codec, q0, y, torch.tensor([len(q0[0])]))[0]
             if args.dataset == "humanml3d":
                 joints = recover_joints(reconstructed * std + mean).cpu()
-            else:
+            elif "reconstructed_joints" in item:
                 with np.load(base / item["reconstructed_joints"], allow_pickle=False) as joint:
                     if "normalized_features" not in joint:
                         raise ValueError("joint recovery cache must retain normalized_features")
                     np.testing.assert_allclose(joint["normalized_features"], reconstructed.cpu().numpy(),
                                                atol=1e-5, rtol=1e-4)
                     joints = torch.from_numpy(joint["joints"])
+            else:
+                physical = (reconstructed * std + mean).cpu().numpy()
+                joints = torch.from_numpy(
+                    recover_omega_joints(physical, anchor=item.get("anchor"), include_anchor=True)
+                )
             target = pack_part_targets(joints, args.dataset).numpy()
         if len(target) != len(q0[0]):
             raise ValueError("recovered joints and latent crops differ")

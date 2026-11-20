@@ -34,7 +34,7 @@ The manifest is a JSON list, for example:
 ]
 ```
 
-Motion is an already selected physical `[4T,D]` crop. The text NPZ contains `text [L,2048]` including its sentence token. For HumanML3D, omit `reconstructed_joints`: the exporter recovers joints from the codec's continuous reconstruction automatically. For Ω, the recovery NPZ contains:
+Motion is an already selected physical `[4T,D]` crop. The text NPZ contains `text [L,2048]` including its sentence token. Omit `reconstructed_joints` to recover joints automatically from the codec's continuous reconstruction (using the packaged SOMA77 template on Ω). If an external Ω `reconstructed_joints` NPZ is supplied, it must contain:
 
 - `normalized_features [4T,D]`: this exact codec's continuous reconstruction using real q0 and the pre-RVQ motion latent;
 - `joints`: recovered physical `[4T,22,3]` for HumanML3D, or `[1+4T,77,3]` for Ω, including the initial anchor pose for Ω.

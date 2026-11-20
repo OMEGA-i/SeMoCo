@@ -124,14 +124,23 @@ def generate(
             if ar is None:
                 raise ValueError("supply a semantic AR or an already sampled q0 plan")
             devices = [text.device.index or 0] if text.device.type == "cuda" else []
-            with torch.random.fork_rng(devices=devices):
+
+            def draw():
                 if reseed:
                     torch.random.default_generator.manual_seed(seed)
                     if devices:
                         with torch.cuda.device(text.device):
                             torch.cuda.manual_seed(seed)
-                q0 = sample_q0(ar, text, text_valid, lengths,
-                               guidance=recipe.ar_guidance if ar_guidance is None else ar_guidance)
+                return sample_q0(ar, text, text_valid, lengths,
+                                  guidance=recipe.ar_guidance if ar_guidance is None else ar_guidance)
+
+            # fork_rng restores the outer state on exit. Later batches must stay
+            # outside it, or every batch restarts from the same unseeded state.
+            if reseed:
+                with torch.random.fork_rng(devices=devices):
+                    q0 = draw()
+            else:
+                q0 = draw()
         if q0.shape != valid.shape:
             raise ValueError(f"q0 shape must match the duration mask {tuple(valid.shape)}")
         if q0.dtype != torch.long or not bool(((q0 >= 0) & (q0 < flow.q0.num_embeddings)).all()):

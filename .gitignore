@@ -13,5 +13,6 @@ runs/
 *.pth
 *.npy
 *.npz
+!src/semoco/assets/soma77_template.npz
 *.log
 .DS_Store

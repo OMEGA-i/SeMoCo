@@ -74,6 +74,10 @@ def main(argv: list[str] | None = None):
         parser.error("text width does not match the Flow checkpoint")
     codec, feature_norm = load_codec(args.codec, dataset=args.dataset, device=device)
     mean, std = load_statistics(args.kin_stats, flow.ydim, device)
+    torch.random.default_generator.manual_seed(args.seed)
+    if device.type == "cuda":
+        with torch.cuda.device(device):
+            torch.cuda.manual_seed(args.seed)
     rng = torch.Generator().manual_seed(args.seed)
     width = int(motion_lengths(frames, args.dataset).max())
     motions, codes, latents = [], [], []
@@ -87,7 +91,7 @@ def main(argv: list[str] | None = None):
             text_valid=mask[start:stop].to(device), frames=frames[start:stop].to(device), q0=chunk_q0,
             latent_mean=mean, latent_std=std, seed=args.seed, ar_guidance=args.ar_guidance,
             flow_guidance=args.flow_guidance, steps=args.steps, initial_noise=chunk_noise,
-            generator=rng, reseed=start == 0,
+            generator=rng, reseed=False,
         )
         motions.extend(motion)
         codes.append(_pad_time(sampled.cpu(), width))

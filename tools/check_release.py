@@ -12,11 +12,15 @@ def main():
     parser.add_argument("--forbid-term", action="append", default=[])
     args = parser.parse_args()
     issues, files = [], 0
-    ignored = {".git", ".venv", "__pycache__", ".pytest_cache", "build", "dist"}
+    ignored = {".git", ".venv", "__pycache__", ".pytest_cache", "build", "dist",
+               "checkpoints", "runs", "data"}
     extensions = {".py", ".md", ".yaml", ".toml", ".json", ".in", ""}
     for path in sorted(args.root.rglob("*")):
         rel = path.relative_to(args.root)
         if not path.is_file() or any(part in ignored or part.endswith(".egg-info") for part in rel.parts):
+            continue
+        if rel.as_posix() == "src/semoco/assets/soma77_template.npz":
+            files += 1
             continue
         if rel.parts[0] == "assets" and path.suffix == ".png":
             files += 1

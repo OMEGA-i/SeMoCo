@@ -8,6 +8,8 @@ import torch
 
 from ..tokenizer.geometry import SomaFK
 
+_TEMPLATE = Path(__file__).resolve().parents[1] / "assets" / "soma77_template.npz"
+
 NUM_JOINTS = 77
 FEATURE_DIM = 499
 _EYE6 = np.array([1.0, 0.0, 0.0, 0.0, 1.0, 0.0], dtype=np.float32)
@@ -56,13 +58,18 @@ def _root_translation(features: np.ndarray, root_rotation: np.ndarray, origin: n
     return translation
 
 
-def recover_joints(features: np.ndarray, template: str | Path, anchor: dict[str, np.ndarray] | None = None) -> np.ndarray:
+def recover_joints(
+    features: np.ndarray,
+    template: str | Path | None = None,
+    anchor: dict[str, np.ndarray] | None = None,
+) -> np.ndarray:
     """Convert physical UMR499 records ``[T, 499]`` to world joints ``[T, 77, 3]``.
 
-    ``template`` is the SOMA77 NPZ with ``parents`` and ``offsets`` used by the
-    geometry loss. The returned frames are the transition records; the anchor
-    pose is the pose before the first record.
+    ``template`` defaults to the packaged SOMA77 parents and offsets. The
+    returned frames are the transition records; the anchor pose is the pose
+    before the first record.
     """
+    template = _TEMPLATE if template is None else template
     features = np.asarray(features, dtype=np.float32)
     if features.ndim != 2 or features.shape[1] != FEATURE_DIM or not len(features):
         raise ValueError("expected nonempty physical UMR499 features [T, 499]")

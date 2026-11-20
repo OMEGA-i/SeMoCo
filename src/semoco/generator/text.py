@@ -16,17 +16,18 @@ class TextConditioner:
             self.model.to(torch.bfloat16)
 
     @torch.inference_mode()
-    def encode(self, captions, retrieval_embeddings):
-        """TMR embeddings must correspond to the same ordered captions."""
+    def token_states(self, captions):
         batch = self.tokenizer(captions, padding=True, truncation=True, max_length=64, return_tensors="pt")
-        batch = {k: v.to(self.device) for k, v in batch.items()}
+        batch = {key: value.to(self.device) for key, value in batch.items()}
         hidden = self.model(**batch).last_hidden_state.float()
-        valid = batch["attention_mask"].bool()
-        sentence = torch.as_tensor(retrieval_embeddings, device=self.device, dtype=torch.float32)
-        if sentence.shape != (len(captions), 256):
-            raise ValueError("one cached TMR 256-D text embedding is required per caption")
+        return hidden, batch["attention_mask"].bool()
+
+    def pack(self, hidden, valid, sentence):
+        sentence = torch.as_tensor(sentence, device=self.device, dtype=torch.float32)
+        if sentence.shape != (hidden.shape[0], 256):
+            raise ValueError("one 256-D sentence embedding is required per caption")
         rows = [append_retrieval_token(hidden[i:i+1, valid[i]], sentence[i:i+1])[0]
-                for i in range(len(captions))]
+                for i in range(hidden.shape[0])]
         width = max(map(len, rows))
         text = hidden.new_zeros((len(rows), width, 2048))
         mask = torch.zeros(len(rows), width, dtype=torch.bool, device=self.device)
@@ -34,3 +35,9 @@ class TextConditioner:
             text[i, -len(row):] = row
             mask[i, -len(row):] = True
         return text, mask
+
+    @torch.inference_mode()
+    def encode(self, captions, retrieval_embeddings):
+        """Sentence embeddings must correspond to the same ordered captions."""
+        hidden, valid = self.token_states(captions)
+        return self.pack(hidden, valid, retrieval_embeddings)

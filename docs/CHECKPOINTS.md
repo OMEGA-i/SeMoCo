@@ -28,6 +28,8 @@ The inference presets in `configs/` use this layout.
 | `flow.pt` | Six-part Flow configuration and EMA weights |
 | `kin_stats.npz` | Motion-latent mean and standard deviation |
 | `feature_stats.npz` | Motion-feature mean and standard deviation |
+| `text_encoder.pt` | Frozen sentence encoder for `semoco-encode-text` |
+| `temporal_parent40k.pt` | Ω only. Ordinary Flow used to start six-part training |
 
 Statistics are computed on the training set. HumanML3D uses 263 motion features;
 Ω-MotionVerse uses 499. Both use 512-dimensional motion latents.

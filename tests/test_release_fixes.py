@@ -6,6 +6,7 @@ import torch
 import yaml
 
 from semoco.data.omega import canonical_anchor, recover_joints
+from semoco.generator.sentence import SentenceEncoder
 from semoco.generator.ar import MotionGPT, MotionGPTConfig
 from semoco.generator.flow import PartFlow
 from semoco.generator.pipeline import generate
@@ -13,6 +14,18 @@ from semoco.tokenizer.codec import CodecConfig, MotionTokenizer
 
 
 ROOT = Path(__file__).parents[1]
+
+
+def test_sentence_encoder_reloads_its_mean_token(tmp_path):
+    model = SentenceEncoder(32, layers=1, width=16, heads=4, feedforward=32).eval()
+    state = {key.replace("sequence.", "seqTransEncoder."): value
+             for key, value in model.state_dict().items() if "encoding" not in key}
+    path = tmp_path / "text_encoder.pt"
+    torch.save(state, path)
+    loaded = SentenceEncoder.load(path)
+    tokens = torch.randn(2, 4, 32)
+    valid = torch.tensor([[True, True, False, False], [True, True, True, True]])
+    torch.testing.assert_close(model.encode(tokens, valid), loaded.encode(tokens, valid))
 
 
 def test_released_ar_configs_load_a_numeric_norm_epsilon():

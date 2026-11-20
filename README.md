@@ -15,7 +15,7 @@ SeMoCo couples a semantically supervised motion codec with body-structured flow 
 
 ## Installation
 
-Requires Python 3.11+ and PyTorch with CUDA. If a large download stalls, set `HF_HUB_DISABLE_XET=1`.
+Requires Python 3.11+ and PyTorch with CUDA.
 
 ```bash
 git clone https://github.com/OMEGA-i/SeMoCo.git
@@ -30,16 +30,14 @@ See [Model Files](docs/CHECKPOINTS.md) for the directory structure.
 
 ## Inference
 
-`examples/prompts.json` is one caption. `semoco-encode-text` also needs the matching L2-normalized TMR sentence vectors, shaped `[N, 256]`, in `--retrieval`. HumanML3D uses the text encoder from [TMR's HumanML3D Guo-feature model](https://github.com/Mathux/TMR#pretrained-models-dvd).
-
 ```bash
-semoco-encode-text --prompts examples/prompts.json --retrieval data/tmr_text.npy \
+semoco-encode-text --dataset omega --prompts examples/prompts.json \
   --output runs/prompts.npz
-semoco-generate --config configs/humanml3d_inference.yaml \
-  --inputs runs/prompts.npz --output runs/motion.npz --batch-size 32
+semoco-generate --config configs/omega_inference.yaml \
+  --inputs runs/prompts.npz --output runs/motion.npz
 ```
 
-Use `configs/omega_inference.yaml` for Ω-MotionVerse.
+Use `--dataset humanml3d` and `configs/humanml3d_inference.yaml` for HumanML3D.
 See [Generation](docs/INFERENCE.md) and [Tokenization](docs/TOKENIZER.md) for details.
 
 ## Training
